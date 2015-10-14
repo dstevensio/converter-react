@@ -1,23 +1,6 @@
 "use strict";
 
-/**
- * Middleware.
- *
- * ## Flux
- *
- * Various strategies to server-side bootstrap the data and a fully rendered
- * page into the application. If successful, adds two `res.locals` values:
- *
- * - `bootstrapData`: Data bootstrap for the app.
- * - `bootstrapComponent`: Rendered component for app.
- *
- * Strategies so far:
- *
- * - `fetch`: Manually retrieve data and send through singleton flux.
- * - `actions`: Use flux instances to invoke/listen to actions and get data.
- *
- */
-var React = require("react");
+var ReactDOMServer = require('react-dom/server');
 var Flux = require("../client/flux");
 var ActionListeners = require("alt/utils/ActionListeners");
 var fetchConversions = require("../client/utils/api").fetchConversions;
@@ -104,7 +87,7 @@ module.exports.flux = {
             // with a simple callback of `function (flux)` that the upstream
             // component can use however it wants / ignore.
             res.locals.bootstrapComponent =
-              React.renderToString(new Component({ flux: flux }));
+              ReactDOMServer.renderToString(new Component({ flux: flux }));
           }
 
           // Restore for next request.
@@ -183,7 +166,7 @@ module.exports.flux = {
         // Pre-render page if applicable.
         if (req.query.__mode !== "noss") {
           res.locals.bootstrapComponent =
-            React.renderToString(new Component({ flux: flux }));
+            ReactDOMServer.renderToString(new Component({ flux: flux }));
         }
 
         _done();
